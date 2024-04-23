@@ -1,18 +1,18 @@
-import mongoose from "mongoose";
-import { InvalidateCacheProps, OrderItemType } from "../types/types.js";
+import mongoose, { Document } from "mongoose";
 import { myCache } from "../app.js";
 import { Product } from "../models/product.js";
+import { InvalidateCacheProps, OrderItemType } from "../types/types.js";
 
 export const connectDB = (uri: string) => {
   mongoose
     .connect(uri, {
-      dbName: "Ecommerce24",
+      dbName: "Ecommerce_24",
     })
-    .then((c) => console.log(`DB conneted to ${c.connection.host}`))
+    .then((c) => console.log(`DB Connected to ${c.connection.host}`))
     .catch((e) => console.log(e));
 };
 
-export const invalidatesCache =  ({
+export const invalidateCache = ({
   product,
   order,
   admin,
@@ -31,18 +31,17 @@ export const invalidatesCache =  ({
 
     if (typeof productId === "object")
       productId.forEach((i) => productKeys.push(`product-${i}`));
-    console.log("LOL");
 
     myCache.del(productKeys);
   }
   if (order) {
-    const orderKeys: string[] = [
+    const ordersKeys: string[] = [
       "all-orders",
       `my-orders-${userId}`,
       `order-${orderId}`,
     ];
 
-    myCache.del(orderKeys);
+    myCache.del(ordersKeys);
   }
   if (admin) {
     myCache.del([
@@ -72,10 +71,10 @@ export const calculatePercentage = (thisMonth: number, lastMonth: number) => {
 
 export const getInventories = async ({
   categories,
-  produtsCount,
+  productsCount,
 }: {
   categories: string[];
-  produtsCount: number;
+  productsCount: number;
 }) => {
   const categoriesCountPromise = categories.map((category) =>
     Product.countDocuments({ category })
@@ -87,7 +86,7 @@ export const getInventories = async ({
 
   categories.forEach((category, i) => {
     categoryCount.push({
-      [category]: Math.round((categoriesCount[i] / produtsCount) * 100),
+      [category]: Math.round((categoriesCount[i] / productsCount) * 100),
     });
   });
 
