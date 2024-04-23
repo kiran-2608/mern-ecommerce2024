@@ -9,7 +9,7 @@ import { Product } from "../models/product.js";
 import ErrorHandler from "../utils/utility-class.js";
 import { rm } from "fs";
 import { myCache } from "../app.js";
-import { invalidatesCache } from "../utils/features.js";
+import { invalidateCache } from "../utils/features.js";
 // import {faker} from '@faker-js/faker'
 
 // Revalidate on New , Update , Delete Product and on New order
@@ -114,7 +114,7 @@ export const newProduct = TryCatch(
       photo: photo.path,
     });
 
-    invalidatesCache({ product: true, admin: true });
+    invalidateCache({ product: true, admin: true });
 
     return res.status(201).json({
       success: true,
@@ -147,7 +147,7 @@ export const updateProduct = TryCatch(async (req, res, next) => {
 
   await product.save();
 
-  invalidatesCache({
+  invalidateCache({
     product: true,
     productId: String(product._id),
     admin: true,
@@ -170,7 +170,7 @@ export const deleteProduct = TryCatch(async (req, res, next) => {
 
   await product.deleteOne();
 
-  invalidatesCache({
+  invalidateCache({
     product: true,
     productId: String(product._id),
     admin: true,
